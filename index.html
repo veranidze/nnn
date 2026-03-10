@@ -1,75 +1,48 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NUP Tracker</title>
-
+    
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NUP Tracker">
     <link rel="apple-touch-icon" href="icon1.jpg">
-    <link rel="manifest"
-        href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk5VUCBUcmFja2VyIiwKICAic2hvcnRfbmFtZSI6ICJOVVAiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y4ZmFmYyIsCiAgInRoZW1lX2NvbG9yIjogIiMyNTYzZWIiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJpY29uMS5qcGciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL2pwZWciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIk5VUCBUcmFja2VyIiwKICAic2hvcnRfbmFtZSI6ICJOVVAiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2Y4ZmFmYyIsCiAgInRoZW1lX2NvbG9yIjogIiMyNTYzZWIiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJpY29uMS5qcGciLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL2pwZWciLAogICAgICAicHVycG9zZSI6ICJhbnkgbWFza2FibGUiCiAgICB9CiAgXQp9">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Используем CDN Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-
-        body {
-            font-family: 'Inter', sans-serif;
+        body { 
+            font-family: 'Inter', sans-serif; 
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .param-input {
-            font-size: 16px !important;
-        }
-
-        .btn-active:active {
-            transform: scale(0.97);
-        }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .param-input { font-size: 16px !important; }
+        .btn-active:active { transform: scale(0.97); }
     </style>
 </head>
-
 <body class="bg-gray-50 text-gray-900 min-h-screen p-4 md:p-8">
 
     <div id="app" class="max-w-4xl mx-auto hidden">
         <header class="flex justify-between items-center mb-6">
             <div class="flex items-center gap-3">
-                <img src="icon1.jpg" class="w-10 h-10 rounded-xl shadow-sm border border-gray-200" alt="logo"
-                    onerror="this.src='https://via.placeholder.com/40'">
+                <img src="icon1.jpg" class="w-10 h-10 rounded-xl shadow-sm border border-gray-200" alt="logo" onerror="this.src='https://via.placeholder.com/40'">
                 <div>
                     <h1 class="text-xl font-bold text-gray-800 tracking-tight">NUP Tracker</h1>
                     <p class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Cloud Sync Active</p>
                 </div>
             </div>
-            <div id="save-status"
-                class="hidden bg-green-500 text-white px-3 py-1.5 rounded-full text-[10px] font-bold fade-in shadow-lg shadow-green-100">
+            <div id="save-status" class="hidden bg-green-500 text-white px-3 py-1.5 rounded-full text-[10px] font-bold fade-in shadow-lg shadow-green-100">
                 СОХРАНЕНО
             </div>
         </header>
@@ -79,27 +52,18 @@
             <div class="md:col-span-1">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                     <div class="flex justify-between items-center mb-4">
-                        <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-50 rounded-lg text-gray-400"><i
-                                class="fas fa-chevron-left text-xs"></i></button>
-                        <span id="current-month-display"
-                            class="font-bold text-sm capitalize text-center flex-1">...</span>
-                        <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-50 rounded-lg text-gray-400"><i
-                                class="fas fa-chevron-right text-xs"></i></button>
+                        <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-50 rounded-lg text-gray-400"><i class="fas fa-chevron-left text-xs"></i></button>
+                        <span id="current-month-display" class="font-bold text-sm capitalize text-center flex-1">...</span>
+                        <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-50 rounded-lg text-gray-400"><i class="fas fa-chevron-right text-xs"></i></button>
                     </div>
 
                     <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-black text-gray-300 mb-2">
-                        <div>ПН</div>
-                        <div>ВТ</div>
-                        <div>СР</div>
-                        <div>ЧТ</div>
-                        <div>ПТ</div>
-                        <div>СБ</div>
-                        <div>ВС</div>
+                        <div>ПН</div><div>ВТ</div><div>СР</div><div>ЧТ</div><div>ПТ</div><div>СБ</div><div>ВС</div>
                     </div>
-
+                    
                     <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
                 </div>
-
+                
                 <div class="mt-4 p-4 bg-white rounded-2xl border border-gray-100 flex items-center justify-between">
                     <div>
                         <p class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Device Auth ID</p>
@@ -121,101 +85,67 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <section>
-                            <h3
-                                class="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 bg-gray-200 rounded-full"></span> До тренировки
                             </h3>
                             <div class="space-y-4">
                                 <div class="field-group">
                                     <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">BPFSL</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="before"
-                                            data-field="bpfsl"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="before" data-field="bpfsl" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                                 <div class="field-group">
                                     <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">NBPFSL</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="before"
-                                            data-field="nbpfsl"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="before" data-field="nbpfsl" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                                 <div class="field-group">
-                                    <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">EG
-                                        (обхват)</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="before"
-                                            data-field="eg"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">EG (обхват)</label>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="before" data-field="eg" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                             </div>
                         </section>
 
                         <section>
-                            <h3
-                                class="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                            <h3 class="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
                                 <span class="w-1.5 h-1.5 bg-blue-400 rounded-full"></span> После тренировки
                             </h3>
                             <div class="space-y-4">
                                 <div class="field-group">
                                     <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">BPFSL</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="after"
-                                            data-field="bpfsl"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="after" data-field="bpfsl" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                                 <div class="field-group">
                                     <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">NBPFSL</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="after"
-                                            data-field="nbpfsl"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="after" data-field="nbpfsl" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                                 <div class="field-group">
-                                    <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">EG
-                                        (обхват)</label>
-                                    <div class="relative"><input type="number" step="0.1" data-cat="after"
-                                            data-field="eg"
-                                            class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span
-                                            class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span>
-                                    </div>
+                                    <label class="text-[11px] font-bold text-gray-500 block mb-1.5 ml-1">EG (обхват)</label>
+                                    <div class="relative"><input type="number" step="0.1" data-cat="after" data-field="eg" class="param-input w-full p-3.5 pr-10 rounded-2xl bg-gray-50 font-bold border-2 border-transparent focus:border-blue-100 focus:bg-white focus:ring-0 outline-none transition-all"><span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-300">CM</span></div>
                                 </div>
                             </div>
                         </section>
                     </div>
 
                     <div class="mt-10 pt-8 border-t border-gray-50">
-                        <h3
-                            class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
+                        <h3 class="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-5 flex items-center gap-2">
                             <i class="fas fa-crown"></i> Эрекция (Максимум)
                         </h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="field-group">
                                 <label class="text-[10px] font-black text-gray-400 block mb-1.5 ml-1">BPEL</label>
-                                <input type="number" step="0.1" data-cat="final" data-field="bpel"
-                                    class="param-input w-full p-4 rounded-2xl bg-blue-50 text-blue-700 font-black text-lg border-none focus:ring-2 focus:ring-blue-100 outline-none transition-all">
+                                <input type="number" step="0.1" data-cat="final" data-field="bpel" class="param-input w-full p-4 rounded-2xl bg-blue-50 text-blue-700 font-black text-lg border-none focus:ring-2 focus:ring-blue-100 outline-none transition-all">
                             </div>
                             <div class="field-group">
                                 <label class="text-[10px] font-black text-gray-400 block mb-1.5 ml-1">NBPEL</label>
-                                <input type="number" step="0.1" data-cat="final" data-field="nbpel"
-                                    class="param-input w-full p-4 rounded-2xl bg-blue-50 text-blue-700 font-black text-lg border-none focus:ring-2 focus:ring-blue-100 outline-none transition-all">
+                                <input type="number" step="0.1" data-cat="final" data-field="nbpel" class="param-input w-full p-4 rounded-2xl bg-blue-50 text-blue-700 font-black text-lg border-none focus:ring-2 focus:ring-blue-100 outline-none transition-all">
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-6">
-                        <textarea id="notes"
-                            class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-50 transition-all min-h-[80px] resize-none"
-                            placeholder="Заметки по тренировке..."></textarea>
+                        <textarea id="notes" class="w-full bg-gray-50 border-none rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-50 transition-all min-h-[80px] resize-none" placeholder="Заметки по тренировке..."></textarea>
                     </div>
 
-                    <button onclick="saveToSupabase()" id="save-btn"
-                        class="w-full mt-6 py-4 bg-gray-900 text-white rounded-2xl font-bold text-sm hover:bg-black shadow-xl shadow-gray-200 btn-active transition-all flex items-center justify-center gap-3">
+                    <button onclick="saveToSupabase()" id="save-btn" class="w-full mt-6 py-4 bg-gray-900 text-white rounded-2xl font-bold text-sm hover:bg-black shadow-xl shadow-gray-200 btn-active transition-all flex items-center justify-center gap-3">
                         <i class="fas fa-cloud-upload-alt text-blue-400"></i>
                         <span>ОБНОВИТЬ В ОБЛАКЕ</span>
                     </button>
@@ -228,12 +158,10 @@
     <div id="loading-screen" class="flex flex-col items-center justify-center min-h-screen">
         <div class="relative">
             <div class="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-            <img src="icon1.jpg" class="w-8 h-8 rounded-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                onerror="this.style.display='none'">
+            <img src="icon1.jpg" class="w-8 h-8 rounded-lg absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" onerror="this.style.display='none'">
         </div>
         <span class="mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Loading Cloud Data</span>
-        <button id="force-start" class="hidden mt-6 text-[10px] text-blue-500 underline font-bold">Продолжить без
-            синхронизации</button>
+        <button id="force-start" class="hidden mt-6 text-[10px] text-blue-500 underline font-bold">Продолжить без синхронизации</button>
     </div>
 
     <script>
@@ -241,19 +169,22 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `self.addEventListener('install', e => self.skipWaiting()); self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => {})));`;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => { });
+                const blob = new Blob([swCode], {type: 'application/javascript'});
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
             });
         }
 
         const SUPABASE_URL = 'https://wzxnddiftagpfqfxnnot.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6eG5kZGlmdGFncGZxZnhubm90Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNTYyODMsImV4cCI6MjA4ODczMjI4M30.iVjROfE704RYXgxuCZ3ePESOsZole1qmCVXgXGy-3NA';
-
+        
         let userId = localStorage.getItem('nup_user_id') || 'u_' + Math.random().toString(36).substr(2, 10);
         localStorage.setItem('nup_user_id', userId);
         document.getElementById('user-id-display').textContent = userId;
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Используем переменную без повторного объявления (защита от SyntaxError)
+        // В некоторых средах Supabase уже может быть определен через CDN тег script
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let dbData = {};
         let selectedDate = new Date().toISOString().split('T')[0];
         let currentMonth = new Date();
@@ -264,7 +195,6 @@
         }
 
         async function initApp() {
-            // Таймер на 5 секунд: если база не ответит, приложение все равно откроется
             const forceTimer = setTimeout(() => {
                 document.getElementById('force-start').classList.remove('hidden');
                 console.warn("Превышено время ожидания ответа от Supabase");
@@ -273,16 +203,16 @@
             document.getElementById('force-start').onclick = showApp;
 
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('nup_logs')
                     .select('data')
                     .eq('user_id', userId)
                     .maybeSingle();
-
+                
                 if (error) throw error;
                 if (data) dbData = data.data || {};
-
-            } catch (err) {
+                
+            } catch (err) { 
                 console.error("Ошибка синхронизации:", err);
             } finally {
                 clearTimeout(forceTimer);
@@ -328,20 +258,20 @@
             };
 
             try {
-                const { error } = await supabase.from('nup_logs').upsert({
-                    user_id: userId,
-                    data: dbData,
-                    updated_at: new Date().toISOString()
+                const { error } = await supabaseClient.from('nup_logs').upsert({ 
+                    user_id: userId, 
+                    data: dbData, 
+                    updated_at: new Date().toISOString() 
                 }, { onConflict: 'user_id' });
-
+                
                 if (error) throw error;
 
                 const status = document.getElementById('save-status');
                 status.classList.remove('hidden');
                 setTimeout(() => status.classList.add('hidden'), 2000);
                 renderCalendar();
-            } catch (e) {
-                alert("Ошибка сохранения: " + e.message);
+            } catch (e) { 
+                alert("Ошибка сохранения: " + e.message); 
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = original;
@@ -351,6 +281,8 @@
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
             const monthDisplay = document.getElementById('current-month-display');
+            if(!grid || !monthDisplay) return;
+            
             grid.innerHTML = '';
             monthDisplay.textContent = currentMonth.toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
 
@@ -365,18 +297,18 @@
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isSelected = selectedDate === dateStr;
                 const dayObj = dbData[dateStr];
-
+                
                 const hasData = dayObj && (
                     (dayObj.before && Object.values(dayObj.before).some(v => v !== '')) ||
                     (dayObj.after && Object.values(dayObj.after).some(v => v !== '')) ||
                     (dayObj.final && Object.values(dayObj.final).some(v => v !== ''))
                 );
-
+                
                 const btn = document.createElement('button');
                 btn.className = `h-10 w-full rounded-xl text-xs transition-all flex items-center justify-center relative ${isSelected ? 'bg-blue-600 text-white font-bold shadow-lg shadow-blue-200 scale-110 z-10' : 'hover:bg-gray-100 text-gray-600'}`;
                 btn.onclick = () => selectDate(dateStr);
                 btn.innerHTML = day;
-
+                
                 if (hasData && !isSelected) {
                     btn.innerHTML += '<div class="absolute bottom-1.5 w-1 h-1 bg-blue-400 rounded-full"></div>';
                 }
@@ -385,7 +317,9 @@
         }
 
         function loadDayData(dateStr) {
-            document.getElementById('selected-date-display').textContent = new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+            const display = document.getElementById('selected-date-display');
+            if(display) display.textContent = new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+            
             const data = dbData[dateStr] || { before: {}, after: {}, final: {}, notes: '' };
             const setVal = (c, f, v) => {
                 const el = document.querySelector(`[data-cat="${c}"][data-field="${f}"]`);
@@ -399,11 +333,12 @@
             setVal('after', 'eg', data.after?.eg);
             setVal('final', 'bpel', data.final?.bpel);
             setVal('final', 'nbpel', data.final?.nbpel);
-            document.getElementById('notes').value = data.notes || '';
+            const notesEl = document.getElementById('notes');
+            if(notesEl) notesEl.value = data.notes || '';
         }
 
+        // Запуск приложения
         initApp();
     </script>
 </body>
-
 </html>
